@@ -2,6 +2,91 @@
 
 本專案提供了一個 MCP (Model Context Protocol) 伺服器，其中包含一系列用於互動式 GUI 操作和分析的工具。
 
+## 基本 MCP 伺服器設定
+
+以下步驟將引導您完成此 MCP 伺服器的基本設定與啟動：
+
+1.  **克隆倉庫**:
+    ```bash
+    git clone https://github.com/melonlay/mcp-interactive-agent.git
+    cd mcp-interactive-agent
+    ```
+
+2.  **建立並啟用虛擬環境** (建議):
+    *   使用 `venv` (Python 內建):
+        ```bash
+        python -m venv .venv
+        # Windows
+        .\.venv\Scripts\activate
+        # macOS / Linux
+        source .venv/bin/activate
+        ```
+    *   或者使用您偏好的其他虛擬環境管理工具 (如 `conda`)。
+
+3.  **安裝依賴套件**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+    (如果您使用的是 `uv`，可以使用 `uv pip install -r requirements.txt`)
+
+4.  **設定環境變數**:
+    為了使 `generate_text_from_google` 和 `get_subarea_description` 工具能夠正常運作，您需要設定 Google AI 的 API 金鑰。請將您的 API 金鑰設定為名為 `genaikey` 的環境變數。
+    *   **Windows (PowerShell)**:
+        ```powershell
+        $env:genaikey = "YOUR_API_KEY_HERE"
+        ```
+        (請注意，此方法僅在目前 PowerShell 工作階段有效。若要永久設定，請透過系統環境變數設定介面操作。)
+    *   **macOS / Linux (Bash/Zsh)**:
+        ```bash
+        export genaikey="YOUR_API_KEY_HERE"
+        ```
+        (可以將此行加入到您的 `.bashrc`, `.zshrc` 或其他 shell 設定檔中以使其永久生效。)
+
+5.  **執行 MCP 伺服器**:
+    本專案使用 `uv` 作為專案和任務執行器。
+    ```bash
+    uv run mcp_server.py
+    ```
+    如果一切順利，您應該會看到伺服器啟動的訊息，並監聽指定的埠號 (預設通常是 `8000` 或 `8765`，依 `mcp` 設定而定)。
+
+現在，MCP 伺服器應該已經準備好接收來自 MCP 客戶端的請求了。
+
+## Cursor IDE 設定 (可選)
+
+如果您使用 Cursor IDE 並希望直接從 IDE 內啟動此 MCP 伺服器，可以按以下步驟設定 `mcp.json`：
+
+1.  在 Cursor IDE 中，找到或建立您的使用者設定檔案 `mcp.json`。
+    *   通常，此檔案位於使用者設定目錄下，例如：
+        *   Windows: `C:\Users\<YourUser>\.cursor\mcp.json`
+        *   macOS: `/Users/<YourUser>/.cursor/mcp.json`
+        *   Linux: `/home/<YourUser>/.cursor/mcp.json`
+
+2.  在 `mcp.json` 檔案中，找到或新增 `mcpServers` 物件。在此物件內，為您的 `interactive-gui-mcp` 伺服器加入以下設定 (如果已有 `mcpServers` 物件，請確保將 `interactive-gui-mcp` 的設定合併進去)：
+
+    ```json
+    {
+        "mcpServers": {
+            // ... 其他可能的伺服器設定 ...
+
+            "interactive-gui-mcp": {
+                "command": "uv",
+                "args": [
+                    "--directory",
+                    "<路徑/到/您的/mcp-interactive-agent>", // <--- 將此處替換為您專案的實際絕對路徑
+                    "run",
+                    "mcp_server.py"
+                ]
+            }
+
+            // ... 其他可能的伺服器設定 ...
+        }
+    }
+    ```
+
+3.  **重要**: 將上述設定中的 `<路徑/到/您的/mcp-interactive-agent>` 替換為您克隆 `mcp-interactive-agent` 專案的**實際絕對路徑**。例如 `D:\projects\mcp-interactive-agent` 或 `/Users/yourname/dev/mcp-interactive-agent`。
+
+完成這些設定後，您應該能夠在 Cursor IDE 中選取並啟動名為 `interactive-gui-mcp` 的 MCP 伺服器。
+
 ## 工具說明
 
 以下是目前可用的工具及其使用方法：

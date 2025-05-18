@@ -10,4 +10,6 @@ wheels/
 .venv
 
 # Cursor-specific folder
-./.cursor/
+.cursor/
+.cursor/rules/*
+.cursor/rules/
